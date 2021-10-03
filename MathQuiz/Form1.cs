@@ -241,5 +241,10 @@ namespace MathQuiz
         {
 
         }
+
+        private void currentDate_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
