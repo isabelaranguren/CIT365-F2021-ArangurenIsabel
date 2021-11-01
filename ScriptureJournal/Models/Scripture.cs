@@ -25,7 +25,6 @@ namespace ScriptureJournal.Models
         [StringLength(30)]
         public string Book { get; set; }
 
-
         [Required]
         public Int16 Chapter { get; set; }
 
@@ -33,7 +32,6 @@ namespace ScriptureJournal.Models
         [Required]
         [StringLength(30)]
         public String Verse { get; set; }
-
 
         public String Notes { get; set; }
 
