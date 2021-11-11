@@ -1,5 +1,4 @@
 ﻿@model MvcMovie.Models.MovieGenreViewModel
-
 @{
     ViewData["Title"] = "Index";
 }
@@ -27,9 +26,11 @@
             <th>
                 @Html.DisplayNameFor(model => model.Movies[0].Title)
             </th>
+
             <th>
-                @Html.DisplayNameFor(model => model.Movies[0].ReleaseDate)
+                @Html.ActionLink("Release Date", "Index", new { sortOrder = ViewBag.DateSortParm })
             </th>
+
             <th>
                 @Html.DisplayNameFor(model => model.Movies[0].Genre)
             </th>
@@ -45,28 +46,28 @@
     <tbody>
         @foreach (var item in Model.Movies)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReleaseDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Genre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rating)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReleaseDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Genre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rating)
+                </td>
+                <td>
+                    <a class="btn btn-info" role="button" asp-action="Edit" asp-route-id="@item.Id">Edit</a> 
+                    <a class="btn btn-success" role="button" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    <a class="btn btn-danger" role="button" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
         }
     </tbody>
 </table>
