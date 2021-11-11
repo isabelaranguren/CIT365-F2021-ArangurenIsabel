@@ -23,34 +23,41 @@ namespace MvcMovie.Models
                 context.Movie.AddRange(
                     new Movie
                     {
-                        Title = "When Harry Met Sally",
-                        ReleaseDate = DateTime.Parse("1989-2-12"),
-                        Genre = "Romantic Comedy",
-                        Price = 7.99M
-                    },
-
-                    new Movie
-                    {
-                        Title = "Ghostbusters ",
-                        ReleaseDate = DateTime.Parse("1984-3-13"),
+                        Title = "The RM",
+                        ReleaseDate = DateTime.Parse("2003-1-31"),
                         Genre = "Comedy",
-                        Price = 8.99M
+                        Price = 7.99M,
+                        Rating = "PG"
+
                     },
 
                     new Movie
                     {
-                        Title = "Ghostbusters 2",
-                        ReleaseDate = DateTime.Parse("1986-2-23"),
-                        Genre = "Comedy",
-                        Price = 9.99M
+                        Title = "Other Side of Heaven ",
+                        ReleaseDate = DateTime.Parse("2001-12-14"),
+                        Genre = "Adventure",
+                        Price = 8.99M,
+                        Rating = "PG"
+
                     },
 
                     new Movie
                     {
-                        Title = "Rio Bravo",
-                        ReleaseDate = DateTime.Parse("1959-4-15"),
-                        Genre = "Western",
-                        Price = 3.99M
+                        Title = "The Other Side of Heaven 2: Fire of Faith ",
+                        ReleaseDate = DateTime.Parse("2019-6-28"),
+                        Genre = "Adventure",
+                        Price = 9.99M,
+                        Rating = "PG-13"
+
+                    },
+
+                    new Movie
+                    {
+                        Title = "Meet the Mormons ",
+                        ReleaseDate = DateTime.Parse("2014-10-14"),
+                        Genre = "Documentary",
+                        Price = 3.99M,
+                        Rating = "PG"
                     }
                 );
                 context.SaveChanges();
