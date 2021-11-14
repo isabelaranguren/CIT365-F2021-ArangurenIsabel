@@ -23,10 +23,10 @@ namespace MvcMovie.Controllers
         }
 
         // GET: Movies
-        public async Task<IActionResult> Index(string movieGenre, string searchString, string sortOrder , string currentFilter, string genreFilter)
+        public async Task<IActionResult> Index(string movieGenre, string searchString, string sortOrder, string currentFilter, string genreFilter)
         {
 
-            
+
 
             ViewData["CurrentSort"] = sortOrder;
             ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
@@ -44,7 +44,7 @@ namespace MvcMovie.Controllers
             ViewData["GenreFilter"] = movieGenre;
             var movies = from m in _context.Movie
                          join g in _context.Genre on m.Genre equals g.ID.ToString()
-                         select new Movie{ Id = m.Id, Title = m.Title , ReleaseDate = m.ReleaseDate , Genre = g.GenreName , Price = m.Price , Rating  = m.Rating };
+                         select new Movie { Id = m.Id, Title = m.Title, ReleaseDate = m.ReleaseDate, Genre = g.GenreName, Price = m.Price, Rating = m.Rating};
 
             // Use LINQ to get list of genres.
             IQueryable<string> genreQuery = from m in _context.Genre
@@ -53,7 +53,7 @@ namespace MvcMovie.Controllers
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                movies = movies.Where(s => s.Title.Contains(searchString)) ;
+                movies = movies.Where(s => s.Title.Contains(searchString));
             }
 
             if (!string.IsNullOrEmpty(movieGenre))
@@ -61,17 +61,17 @@ namespace MvcMovie.Controllers
                 movies = movies.Where(x => x.Genre == movieGenre);
             }
 
-            
+
             switch (sortOrder)
             {
-             
+
                 case "Date":
                     movies = movies.OrderBy(s => s.ReleaseDate);
                     break;
                 case "date_desc":
                     movies = movies.OrderByDescending(s => s.ReleaseDate);
                     break;
-            
+
             }
 
             var movieGenreVM = new MovieGenreViewModel
@@ -79,8 +79,8 @@ namespace MvcMovie.Controllers
                 Genres = new SelectList(await genreQuery.Distinct().ToListAsync()),
                 Movies = await movies.ToListAsync()
             };
-            
-           // return View(await movies.AsNoTracking().ToListAsync());
+
+            // return View(await movies.AsNoTracking().ToListAsync());
             return View(movieGenreVM);
         }
 
@@ -92,10 +92,10 @@ namespace MvcMovie.Controllers
                 return NotFound();
             }
 
-        
+
             var movies = from m in _context.Movie
                          join g in _context.Genre on m.Genre equals g.ID.ToString()
-                         select new Movie { Id = m.Id, Title = m.Title, ReleaseDate = m.ReleaseDate, Genre = g.GenreName, Price = m.Price, Rating = m.Rating };
+                         select new Movie { Id = m.Id, Title = m.Title, ReleaseDate = m.ReleaseDate, Genre = g.GenreName, Price = m.Price, Rating = m.Rating, ImagePath = m.ImagePath };
 
             var movie = await movies
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -110,7 +110,7 @@ namespace MvcMovie.Controllers
         // GET: Movies/Create
         public IActionResult Create()
         {
-           
+
             var genres = _context.Genre.ToList();
 
             var genreList = new SelectList(genres, "ID", "GenreName");
@@ -128,6 +128,7 @@ namespace MvcMovie.Controllers
         {
             if (ModelState.IsValid)
             {
+        
                 _context.Add(movie);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -144,7 +145,6 @@ namespace MvcMovie.Controllers
             }
 
             var movie = await _context.Movie.FindAsync(id);
-            
             if (movie == null)
             {
                 return NotFound();
@@ -162,7 +162,7 @@ namespace MvcMovie.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,ReleaseDate,Genre,Price,Rating,")] Movie movie)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,ReleaseDate,Genre,Price,Rating")] Movie movie)
         {
             if (id != movie.Id)
             {
@@ -173,7 +173,8 @@ namespace MvcMovie.Controllers
             {
                 try
                 {
-       
+             
+                    _context.Update(movie);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -202,7 +203,7 @@ namespace MvcMovie.Controllers
 
             var movies = from m in _context.Movie
                          join g in _context.Genre on m.Genre equals g.ID.ToString()
-                         select new Movie { Id = m.Id, Title = m.Title, ReleaseDate = m.ReleaseDate, Genre = g.GenreName, Price = m.Price, Rating = m.Rating };
+                         select new Movie { Id = m.Id, Title = m.Title, ReleaseDate = m.ReleaseDate, Genre = g.GenreName, Price = m.Price, Rating = m.Rating};
 
             var movie = await movies
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -224,7 +225,7 @@ namespace MvcMovie.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-  
+     
         private bool MovieExists(int id)
         {
             return _context.Movie.Any(e => e.Id == id);
