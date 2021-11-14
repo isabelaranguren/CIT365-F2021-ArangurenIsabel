@@ -10,7 +10,7 @@ namespace MvcMovie.Models
     {
         public int Id { get; set; }
 
-        [StringLength(60, MinimumLength = 3)]
+        [Required, StringLength(60, MinimumLength = 3)]
         public string Title { get; set; }
 
         [Display(Name = "Release Date"), DataType(DataType.Date)]
@@ -25,11 +25,12 @@ namespace MvcMovie.Models
 
         [RegularExpression(@"^[A-Z]+[a-zA-Z0-9""'\s-]*$"), StringLength(5)]
         public string Rating { get; set; }
+        
         [Display(Name = "Picture")]
-        public string ImagePath { get; set; }
+        public string Image { get; set; }
+
         [NotMapped]
-        [Display(Name = "Picture")]
-        public IFormFile ProfileImage { get; set; }
+        public IFormFile Photo { get; set; }
 
     }
 

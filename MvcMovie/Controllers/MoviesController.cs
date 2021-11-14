@@ -44,7 +44,7 @@ namespace MvcMovie.Controllers
             ViewData["GenreFilter"] = movieGenre;
             var movies = from m in _context.Movie
                          join g in _context.Genre on m.Genre equals g.ID.ToString()
-                         select new Movie{ Id = m.Id, Title = m.Title , ReleaseDate = m.ReleaseDate , Genre = g.GenreName , Price = m.Price , Rating  = m.Rating , ProfileImage  = m.ProfileImage };
+                         select new Movie{ Id = m.Id, Title = m.Title , ReleaseDate = m.ReleaseDate , Genre = g.GenreName , Price = m.Price , Rating  = m.Rating };
 
             // Use LINQ to get list of genres.
             IQueryable<string> genreQuery = from m in _context.Genre
@@ -95,7 +95,7 @@ namespace MvcMovie.Controllers
         
             var movies = from m in _context.Movie
                          join g in _context.Genre on m.Genre equals g.ID.ToString()
-                         select new Movie { Id = m.Id, Title = m.Title, ReleaseDate = m.ReleaseDate, Genre = g.GenreName, Price = m.Price, Rating = m.Rating, ImagePath = m.ImagePath };
+                         select new Movie { Id = m.Id, Title = m.Title, ReleaseDate = m.ReleaseDate, Genre = g.GenreName, Price = m.Price, Rating = m.Rating };
 
             var movie = await movies
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -124,12 +124,10 @@ namespace MvcMovie.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,ReleaseDate,Genre,Price,Rating,ImagePath, ProfileImage")] Movie movie)
+        public async Task<IActionResult> Create([Bind("Id,Title,ReleaseDate,Genre,Price,Rating")] Movie movie)
         {
             if (ModelState.IsValid)
             {
-                string uniqueFileName = UploadedFile(movie);
-                movie.ImagePath = uniqueFileName;
                 _context.Add(movie);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -146,6 +144,7 @@ namespace MvcMovie.Controllers
             }
 
             var movie = await _context.Movie.FindAsync(id);
+            
             if (movie == null)
             {
                 return NotFound();
@@ -163,7 +162,7 @@ namespace MvcMovie.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,ReleaseDate,Genre,Price,Rating,ImagePath,ProfileImage")] Movie movie)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,ReleaseDate,Genre,Price,Rating,")] Movie movie)
         {
             if (id != movie.Id)
             {
@@ -174,9 +173,7 @@ namespace MvcMovie.Controllers
             {
                 try
                 {
-                    string uniqueFileName = UploadedFile(movie);
-                    movie.ImagePath = uniqueFileName;
-                    _context.Update(movie);
+       
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -205,7 +202,7 @@ namespace MvcMovie.Controllers
 
             var movies = from m in _context.Movie
                          join g in _context.Genre on m.Genre equals g.ID.ToString()
-                         select new Movie { Id = m.Id, Title = m.Title, ReleaseDate = m.ReleaseDate, Genre = g.GenreName, Price = m.Price, Rating = m.Rating, ProfileImage = m.ProfileImage };
+                         select new Movie { Id = m.Id, Title = m.Title, ReleaseDate = m.ReleaseDate, Genre = g.GenreName, Price = m.Price, Rating = m.Rating };
 
             var movie = await movies
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -227,25 +224,7 @@ namespace MvcMovie.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        private string UploadedFile(Movie movie)
-        {
-            string uniqueFileName = null;
-
-            var file = movie.ProfileImage as IFormFile;
-            //var allowedExtensions = new[] { ".jpg", ".png" };
-            if (movie.ProfileImage != null)
-            {
-                var extension = Path.GetExtension(file.FileName);
-                string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images");
-                uniqueFileName = Guid.NewGuid().ToString() + "_" + movie.ProfileImage.FileName + extension;
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    movie.ProfileImage.CopyTo(fileStream);
-                }
-            }
-            return uniqueFileName;
-        }
+  
         private bool MovieExists(int id)
         {
             return _context.Movie.Any(e => e.Id == id);

@@ -10,8 +10,8 @@ using MvcMovie.Data;
 namespace MvcMovie.Migrations
 {
     [DbContext(typeof(MvcMovieContext))]
-    [Migration("20211114020345_Init")]
-    partial class Init
+    [Migration("20211114030411_movies")]
+    partial class movies
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -51,6 +51,9 @@ namespace MvcMovie.Migrations
                         .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("ImagePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")

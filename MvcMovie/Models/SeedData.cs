@@ -23,12 +23,21 @@ namespace MvcMovie.Models
                 context.Movie.AddRange(
                     new Movie
                     {
-                        Title = "Home Teachers",
-                        ReleaseDate = DateTime.Parse("1989-2-12"),
+                        Title = "The Home Teachers",
+                        ReleaseDate = DateTime.Parse("2004-2-12"),
                         Genre = "1",
                         Rating = "G",
-                        Price = 7.99M
-                    },
+                        Price = 7.99M                    },
+                   new Movie
+                   {
+                       Title = "The RM",
+                       ReleaseDate = DateTime.Parse("2003-2-12"),
+                       Genre = "2",
+                       Rating = "G",
+                       Price = 6.99M,
+                 
+
+                   },
 
                     new Movie
                     {
@@ -36,25 +45,18 @@ namespace MvcMovie.Models
                         ReleaseDate = DateTime.Parse("2002-3-13"),
                         Genre = "2",
                         Rating = "G",
-                        Price = 8.99M
+                        Price = 8.99M,
                     },
 
+           
                     new Movie
                     {
-                        Title = "The Restoration",
-                        ReleaseDate = DateTime.Parse("1986-2-23"),
-                        Genre = "3",
-                        Rating = "G",
-                        Price = 9.99M
-                    },
-
-                    new Movie
-                    {
-                        Title = "Charly",
-                        ReleaseDate = DateTime.Parse("1959-4-15"),
-                        Genre = "3",
-                        Rating = "PG",
-                        Price = 3.99M
+                        Title = "The Other Side of Heaven: 2 Fire of Faith",
+                        ReleaseDate = DateTime.Parse("2018-9-11"),
+                        Genre = "2",
+                        Rating = "PG-13",
+                        Price = 3.99M,
+                  
                     }
                 );
                 context.SaveChanges();
@@ -90,12 +92,8 @@ namespace MvcMovie.Models
                       {
                           GenreName = "Documental",
 
-                      },
-                       new Genre
-                       {
-                           GenreName = "Romantic Comedy",
-
-                       }
+                      }
+                    
                 );
                 contextGenres.SaveChanges();
             }

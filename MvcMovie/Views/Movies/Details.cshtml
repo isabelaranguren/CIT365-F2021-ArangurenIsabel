@@ -5,8 +5,6 @@
 }
 
 <h1>Details</h1>
-
-<div>
     <h4>Movie</h4>
     <hr />
     <div class="row">
@@ -43,18 +41,7 @@
                     @Html.DisplayFor(model => model.Rating)
                 </dd>
             </dl>
-            @{ var imagePath = "";
-               
-                imagePath = @Model.ImagePath;
-                imagePath = @"..\..\images\" + imagePath;
-            }
-        </div>
-        <div class="col-md-4 pull-left" id="containerImg">
-            <div class="polaroid ">
-                <img id="idImg" src="@imagePath" width="300" height="300" name="myImage" alt="Movie Picture" />
-            </div>
-
-        </div>
+ 
     </div>
 </div>
 <div>
