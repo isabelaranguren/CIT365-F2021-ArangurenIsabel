@@ -95,7 +95,7 @@ namespace MvcMovie.Controllers
 
             var movies = from m in _context.Movie
                          join g in _context.Genre on m.Genre equals g.ID.ToString()
-                         select new Movie { Id = m.Id, Title = m.Title, ReleaseDate = m.ReleaseDate, Genre = g.GenreName, Price = m.Price, Rating = m.Rating, ImagePath = m.ImagePath };
+                         select new Movie { Id = m.Id, Title = m.Title, ReleaseDate = m.ReleaseDate, Genre = g.GenreName, Price = m.Price, Rating = m.Rating};
 
             var movie = await movies
                 .FirstOrDefaultAsync(m => m.Id == id);
