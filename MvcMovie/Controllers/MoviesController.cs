@@ -5,8 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using MvcMovie.Data;
 using MvcMovie.Models;
+using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace MvcMovie.Controllers
 {
@@ -20,29 +23,37 @@ namespace MvcMovie.Controllers
         }
 
         // GET: Movies
-        // GET: Movies
-        public async Task<IActionResult> Index(string movieGenre,  string sortOrder, string searchString)
+        public async Task<IActionResult> Index(string movieGenre, string searchString, string sortOrder , string currentFilter, string genreFilter)
         {
 
-            ViewBag.CurrentSort = sortOrder;
+            
+
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+
+            if (searchString == null)
+            {
+                searchString = currentFilter;
+            }
+            if (movieGenre == null)
+            {
+                movieGenre = genreFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["GenreFilter"] = movieGenre;
+            var movies = from m in _context.Movie
+                         join g in _context.Genre on m.Genre equals g.ID.ToString()
+                         select new Movie{ Id = m.Id, Title = m.Title , ReleaseDate = m.ReleaseDate , Genre = g.GenreName , Price = m.Price , Rating  = m.Rating , ProfileImage  = m.ProfileImage };
 
             // Use LINQ to get list of genres.
-            IQueryable<string> genreQuery = from m in _context.Movie
-                                            orderby m.Genre
-                                            select m.Genre;
-
-            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
-
-          
-
-            var movies = from m in _context.Movie
-                         select m;
-
+            IQueryable<string> genreQuery = from m in _context.Genre
+                                            orderby m.GenreName
+                                            select m.GenreName;
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                movies = movies.Where(s => s.Title.Contains(searchString));
+                movies = movies.Where(s => s.Title.Contains(searchString)) ;
             }
 
             if (!string.IsNullOrEmpty(movieGenre))
@@ -50,33 +61,29 @@ namespace MvcMovie.Controllers
                 movies = movies.Where(x => x.Genre == movieGenre);
             }
 
-
+            
             switch (sortOrder)
             {
-                case "book_desc":
-                    movies = movies.OrderByDescending(m => m.Title);
-                    break;
+             
                 case "Date":
-                    movies = movies.OrderBy(m => m.ReleaseDate);
+                    movies = movies.OrderBy(s => s.ReleaseDate);
                     break;
                 case "date_desc":
-                    movies = movies.OrderByDescending(m => m.ReleaseDate);
+                    movies = movies.OrderByDescending(s => s.ReleaseDate);
                     break;
-                default:
-                    movies = movies.OrderBy(m => m.Title);
-                    break;
+            
             }
-
-
 
             var movieGenreVM = new MovieGenreViewModel
             {
                 Genres = new SelectList(await genreQuery.Distinct().ToListAsync()),
                 Movies = await movies.ToListAsync()
             };
-
+            
+           // return View(await movies.AsNoTracking().ToListAsync());
             return View(movieGenreVM);
         }
+
         // GET: Movies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -85,7 +92,12 @@ namespace MvcMovie.Controllers
                 return NotFound();
             }
 
-            var movie = await _context.Movie
+        
+            var movies = from m in _context.Movie
+                         join g in _context.Genre on m.Genre equals g.ID.ToString()
+                         select new Movie { Id = m.Id, Title = m.Title, ReleaseDate = m.ReleaseDate, Genre = g.GenreName, Price = m.Price, Rating = m.Rating, ImagePath = m.ImagePath };
+
+            var movie = await movies
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (movie == null)
             {
@@ -98,19 +110,26 @@ namespace MvcMovie.Controllers
         // GET: Movies/Create
         public IActionResult Create()
         {
+           
+            var genres = _context.Genre.ToList();
+
+            var genreList = new SelectList(genres, "ID", "GenreName");
+
+            ViewData["Genres"] = genreList;
             return View();
         }
 
         // POST: Movies/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,ReleaseDate,Genre,Price,Rating")] Movie movie)
+        public async Task<IActionResult> Create([Bind("Id,Title,ReleaseDate,Genre,Price,Rating,ImagePath, ProfileImage")] Movie movie)
         {
             if (ModelState.IsValid)
             {
-
+                string uniqueFileName = UploadedFile(movie);
+                movie.ImagePath = uniqueFileName;
                 _context.Add(movie);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -131,15 +150,20 @@ namespace MvcMovie.Controllers
             {
                 return NotFound();
             }
+            var genres = _context.Genre.ToList();
+
+            var genreList = new SelectList(genres, "ID", "GenreName");
+
+            ViewData["Genres"] = genreList;
             return View(movie);
         }
 
         // POST: Movies/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,ReleaseDate,Genre,Price,Rating")] Movie movie)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,ReleaseDate,Genre,Price,Rating,ImagePath,ProfileImage")] Movie movie)
         {
             if (id != movie.Id)
             {
@@ -150,6 +174,8 @@ namespace MvcMovie.Controllers
             {
                 try
                 {
+                    string uniqueFileName = UploadedFile(movie);
+                    movie.ImagePath = uniqueFileName;
                     _context.Update(movie);
                     await _context.SaveChangesAsync();
                 }
@@ -177,7 +203,11 @@ namespace MvcMovie.Controllers
                 return NotFound();
             }
 
-            var movie = await _context.Movie
+            var movies = from m in _context.Movie
+                         join g in _context.Genre on m.Genre equals g.ID.ToString()
+                         select new Movie { Id = m.Id, Title = m.Title, ReleaseDate = m.ReleaseDate, Genre = g.GenreName, Price = m.Price, Rating = m.Rating, ProfileImage = m.ProfileImage };
+
+            var movie = await movies
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (movie == null)
             {
@@ -197,7 +227,25 @@ namespace MvcMovie.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        private string UploadedFile(Movie movie)
+        {
+            string uniqueFileName = null;
 
+            var file = movie.ProfileImage as IFormFile;
+            //var allowedExtensions = new[] { ".jpg", ".png" };
+            if (movie.ProfileImage != null)
+            {
+                var extension = Path.GetExtension(file.FileName);
+                string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images");
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + movie.ProfileImage.FileName + extension;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    movie.ProfileImage.CopyTo(fileStream);
+                }
+            }
+            return uniqueFileName;
+        }
         private bool MovieExists(int id)
         {
             return _context.Movie.Any(e => e.Id == id);

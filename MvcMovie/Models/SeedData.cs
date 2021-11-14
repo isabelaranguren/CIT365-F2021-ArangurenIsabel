@@ -23,44 +23,81 @@ namespace MvcMovie.Models
                 context.Movie.AddRange(
                     new Movie
                     {
-                        Title = "The RM",
-                        ReleaseDate = DateTime.Parse("2003-1-31"),
-                        Genre = "Comedy",
-                        Price = 7.99M,
-                        Rating = "PG"
-
+                        Title = "Home Teachers",
+                        ReleaseDate = DateTime.Parse("1989-2-12"),
+                        Genre = "1",
+                        Rating = "G",
+                        Price = 7.99M
                     },
 
                     new Movie
                     {
-                        Title = "Other Side of Heaven ",
-                        ReleaseDate = DateTime.Parse("2001-12-14"),
-                        Genre = "Adventure",
-                        Price = 8.99M,
-                        Rating = "PG"
-
+                        Title = "The Other Side of Heaven ",
+                        ReleaseDate = DateTime.Parse("2002-3-13"),
+                        Genre = "2",
+                        Rating = "G",
+                        Price = 8.99M
                     },
 
                     new Movie
                     {
-                        Title = "The Other Side of Heaven 2: Fire of Faith ",
-                        ReleaseDate = DateTime.Parse("2019-6-28"),
-                        Genre = "Adventure",
-                        Price = 9.99M,
-                        Rating = "PG-13"
-
+                        Title = "The Restoration",
+                        ReleaseDate = DateTime.Parse("1986-2-23"),
+                        Genre = "3",
+                        Rating = "G",
+                        Price = 9.99M
                     },
 
                     new Movie
                     {
-                        Title = "Meet the Mormons ",
-                        ReleaseDate = DateTime.Parse("2014-10-14"),
-                        Genre = "Documentary",
-                        Price = 3.99M,
-                        Rating = "PG"
+                        Title = "Charly",
+                        ReleaseDate = DateTime.Parse("1959-4-15"),
+                        Genre = "3",
+                        Rating = "PG",
+                        Price = 3.99M
                     }
                 );
                 context.SaveChanges();
+            }
+            using (var contextGenres = new MvcMovieContext(
+              serviceProvider.GetRequiredService<
+                  DbContextOptions<MvcMovieContext>>()))
+            {
+                // Look for any movies.
+                if (contextGenres.Genre.Any())
+                {
+                    return;   // DB has been seeded
+                }
+
+                contextGenres.Genre.AddRange(
+                    new Genre
+                    {
+                        GenreName = "Comedy",
+                     
+                    },
+
+                    new Genre
+                    {
+                        GenreName = "Drama",
+
+                    },
+                     new Genre
+                     {
+                         GenreName = "Romantic",
+
+                     },
+                      new Genre
+                      {
+                          GenreName = "Documental",
+
+                      },
+                       new Genre
+                       {
+                           GenreName = "Romantic Comedy",
+
+                       }
+                );
+                contextGenres.SaveChanges();
             }
         }
     }
