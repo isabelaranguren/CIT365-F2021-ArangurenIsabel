@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Notes.Models;
 using Xamarin.Forms;
 
@@ -61,5 +60,4 @@ namespace Notes.Views
             await Shell.Current.GoToAsync("..");
         }
     }
-
 }

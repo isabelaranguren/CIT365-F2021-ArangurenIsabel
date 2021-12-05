@@ -8,7 +8,7 @@
         <Image Source="xamarin_logo.png"
                BackgroundColor="{StaticResource AppPrimaryColor}"
                Opacity="0.85"
-               VerticalOptions="Center"
+               VerticalOptions="Center" 
                HeightRequest="64" />
         <!-- Layout children vertically -->
         <StackLayout Grid.Row="1"
@@ -18,8 +18,8 @@
                 <Label.FormattedText>
                     <FormattedString>
                         <FormattedString.Spans>
-                            <Span Text="Notes"
-                                  FontAttributes="Bold"
+                            <Span Text="Notes" 
+                                  FontAttributes="Bold" 
                                   FontSize="22" />
                             <Span Text=" v1.0" />
                         </FormattedString.Spans>

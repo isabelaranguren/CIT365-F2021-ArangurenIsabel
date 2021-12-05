@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Notes.Models;
 using Xamarin.Forms;
@@ -23,6 +21,12 @@ namespace Notes.Views
             collectionView.ItemsSource = await App.Database.GetNotesAsync();
         }
 
+        async void OnAddClicked(object sender, EventArgs e)
+        {
+            // Navigate to the NoteEntryPage.
+            await Shell.Current.GoToAsync(nameof(NoteEntryPage));
+        }
+
         async void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.CurrentSelection != null)
@@ -32,13 +36,5 @@ namespace Notes.Views
                 await Shell.Current.GoToAsync($"{nameof(NoteEntryPage)}?{nameof(NoteEntryPage.ItemId)}={note.ID.ToString()}");
             }
         }
-
-        async void OnAddClicked(object sender, EventArgs e)
-        {
-            // Navigate to the NoteEntryPage, without passing any data.
-            await Shell.Current.GoToAsync(nameof(NoteEntryPage));
-        }
-
-     
     }
 }

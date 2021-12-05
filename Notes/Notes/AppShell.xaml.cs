@@ -1,5 +1,5 @@
-﻿using Notes.Views;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
+using Notes.Views;
 
 namespace Notes
 {

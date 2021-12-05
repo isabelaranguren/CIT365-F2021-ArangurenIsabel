@@ -8,7 +8,7 @@
         <Style TargetType="{x:Type Editor}">
             <Setter Property="BackgroundColor"
                     Value="{StaticResource AppBackgroundColor}" />
-        </Style>       
+        </Style>
     </ContentPage.Resources>
 
     <!-- Layout children vertically -->
@@ -18,10 +18,10 @@
                 HeightRequest="100" />
         <!-- Layout children in two columns -->
         <Grid ColumnDefinitions="*,*">
-            <Button Text="Save"
+            <Button Text="Save" 
                     Clicked="OnSaveButtonClicked" />
             <Button Grid.Column="1"
-                    Text="Delete"
+                    Text="Delete" 
                     Clicked="OnDeleteButtonClicked"/>
         </Grid>
     </StackLayout>
